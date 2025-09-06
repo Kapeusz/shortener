@@ -52,13 +52,13 @@ defmodule ShortnrWeb.Router do
 
     live_session :redirect_if_admin_is_authenticated,
       on_mount: [{ShortnrWeb.AdminAuth, :redirect_if_admin_is_authenticated}] do
-      live "/admins/register", AdminRegistrationLive, :new
-      live "/admins/log_in", AdminLoginLive, :new
-      live "/admins/reset_password", AdminForgotPasswordLive, :new
-      live "/admins/reset_password/:token", AdminResetPasswordLive, :edit
+      live "/admins/register", Auth.AdminRegistrationLive, :new
+      live "/admins/log_in", Auth.AdminLoginLive, :new
+      live "/admins/reset_password", Auth.AdminForgotPasswordLive, :new
+      live "/admins/reset_password/:token", Auth.AdminResetPasswordLive, :edit
     end
 
-    post "/admins/log_in", AdminSessionController, :create
+    post "/admins/log_in", Auth.AdminSessionController, :create
   end
 
   scope "/", ShortnrWeb do
@@ -66,20 +66,23 @@ defmodule ShortnrWeb.Router do
 
     live_session :require_authenticated_admin,
       on_mount: [{ShortnrWeb.AdminAuth, :ensure_authenticated}] do
-      live "/admins/settings", AdminSettingsLive, :edit
-      live "/admins/settings/confirm_email/:token", AdminSettingsLive, :confirm_email
+      live "/admins/settings", Auth.AdminSettingsLive, :edit
+      live "/admins/settings/confirm_email/:token", Auth.AdminSettingsLive, :confirm_email
+
+      # Shorten routes
+      live "/shorten", Shorten.ShortenLive, :index
     end
   end
 
   scope "/", ShortnrWeb do
     pipe_through [:browser]
 
-    delete "/admins/log_out", AdminSessionController, :delete
+    delete "/admins/log_out", Auth.AdminSessionController, :delete
 
     live_session :current_admin,
       on_mount: [{ShortnrWeb.AdminAuth, :mount_current_admin}] do
-      live "/admins/confirm/:token", AdminConfirmationLive, :edit
-      live "/admins/confirm", AdminConfirmationInstructionsLive, :new
+      live "/admins/confirm/:token", Auth.AdminConfirmationLive, :edit
+      live "/admins/confirm", Auth.AdminConfirmationInstructionsLive, :new
     end
   end
 end

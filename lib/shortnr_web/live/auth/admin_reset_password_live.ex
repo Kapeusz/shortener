@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminResetPasswordLive do
+defmodule ShortnrWeb.Auth.AdminResetPasswordLive do
   use ShortnrWeb, :live_view
 
   alias Shortnr.Accounts

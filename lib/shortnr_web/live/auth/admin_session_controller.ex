@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminSessionController do
+defmodule ShortnrWeb.Auth.AdminSessionController do
   use ShortnrWeb, :controller
 
   alias Shortnr.Accounts

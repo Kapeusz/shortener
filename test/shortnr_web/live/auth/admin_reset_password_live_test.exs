@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminResetPasswordLiveTest do
+defmodule ShortnrWeb.Auth.AdminResetPasswordLiveTest do
   use ShortnrWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest

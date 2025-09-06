@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminRegistrationLiveTest do
+defmodule ShortnrWeb.Auth.AdminRegistrationLiveTest do
   use ShortnrWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest

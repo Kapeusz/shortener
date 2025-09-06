@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminRegistrationLive do
+defmodule ShortnrWeb.Auth.AdminRegistrationLive do
   use ShortnrWeb, :live_view
 
   alias Shortnr.Accounts

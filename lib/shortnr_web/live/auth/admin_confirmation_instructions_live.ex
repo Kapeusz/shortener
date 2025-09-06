@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminConfirmationInstructionsLive do
+defmodule ShortnrWeb.Auth.AdminConfirmationInstructionsLive do
   use ShortnrWeb, :live_view
 
   alias Shortnr.Accounts

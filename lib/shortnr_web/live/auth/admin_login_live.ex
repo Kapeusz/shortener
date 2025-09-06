@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminLoginLive do
+defmodule ShortnrWeb.Auth.AdminLoginLive do
   use ShortnrWeb, :live_view
 
   def render(assigns) do

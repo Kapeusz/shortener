@@ -166,7 +166,11 @@ defmodule Shortnr.Accounts do
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_admin_update_email_instructions(%Admin{} = admin, current_email, update_email_url_fun)
+  def deliver_admin_update_email_instructions(
+        %Admin{} = admin,
+        current_email,
+        update_email_url_fun
+      )
       when is_function(update_email_url_fun, 1) do
     {encoded_token, admin_token} = AdminToken.build_email_token(admin, "change:#{current_email}")
 
@@ -304,7 +308,11 @@ defmodule Shortnr.Accounts do
       when is_function(reset_password_url_fun, 1) do
     {encoded_token, admin_token} = AdminToken.build_email_token(admin, "reset_password")
     Repo.insert!(admin_token)
-    AdminNotifier.deliver_reset_password_instructions(admin, reset_password_url_fun.(encoded_token))
+
+    AdminNotifier.deliver_reset_password_instructions(
+      admin,
+      reset_password_url_fun.(encoded_token)
+    )
   end
 
   @doc """

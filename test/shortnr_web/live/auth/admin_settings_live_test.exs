@@ -1,4 +1,4 @@
-defmodule ShortnrWeb.AdminSettingsLiveTest do
+defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
   use ShortnrWeb.ConnCase, async: true
 
   alias Shortnr.Accounts
@@ -165,7 +165,11 @@ defmodule ShortnrWeb.AdminSettingsLiveTest do
 
       token =
         extract_admin_token(fn url ->
-          Accounts.deliver_admin_update_email_instructions(%{admin | email: email}, admin.email, url)
+          Accounts.deliver_admin_update_email_instructions(
+            %{admin | email: email},
+            admin.email,
+            url
+          )
         end)
 
       %{conn: log_in_admin(conn, admin), token: token, email: email, admin: admin}
