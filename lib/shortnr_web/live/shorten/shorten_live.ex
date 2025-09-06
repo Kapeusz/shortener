@@ -39,6 +39,8 @@ defmodule ShortnrWeb.Shorten.ShortenLive do
     urls = Urls.list_urls()
     base_url = ShortnrWeb.Endpoint.url()
 
+    if connected?(socket), do: Phoenix.PubSub.subscribe(Shortnr.PubSub, "redirects")
+
     {:ok,
      socket
      |> assign(:page_title, "Shorten URL")
@@ -74,6 +76,16 @@ defmodule ShortnrWeb.Shorten.ShortenLive do
       {:error, reason} ->
         {:noreply, put_flash(socket, :error, to_string(reason))}
     end
+  end
+
+  # Live update redirect counts when redirects happen
+  def handle_info({:redirect, %{slug: slug}}, socket) do
+    urls =
+      Enum.map(socket.assigns.urls, fn u ->
+        if u.shortened_url == slug, do: %{u | redirect_count: u.redirect_count + 1}, else: u
+      end)
+
+    {:noreply, assign(socket, :urls, urls)}
   end
 
   def render(assigns) do

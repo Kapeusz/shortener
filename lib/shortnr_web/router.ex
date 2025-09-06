@@ -85,4 +85,9 @@ defmodule ShortnrWeb.Router do
       live "/admins/confirm", Auth.AdminConfirmationInstructionsLive, :new
     end
   end
+
+  scope "/", ShortnrWeb do
+    pipe_through :browser
+    get "/:slug", RedirectController, :show
+  end
 end

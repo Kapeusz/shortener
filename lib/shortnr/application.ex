@@ -14,6 +14,8 @@ defmodule Shortnr.Application do
       {Phoenix.PubSub, name: Shortnr.PubSub},
       # Per-node ETS cache for long_url -> slug
       Shortnr.UrlCache,
+      # Redirect metrics collector (PubSub -> Postgres batch inserts)
+      Shortnr.Metrics.Collector,
       # Start the Finch HTTP client for sending emails
       {Finch, name: Shortnr.Finch},
       # Start a worker by calling: Shortnr.Worker.start_link(arg)
