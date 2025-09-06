@@ -7,9 +7,9 @@ defmodule Shortnr.Urls.Url do
   schema "urls" do
     field :long_url, :string
     field :redirect_count, :integer, default: 0
-    field :expires_at, :utc_datetime
+    field :expires_at, :utc_datetime_usec
 
-    timestamps(type: :utc_datetime, inserted_at: :inserted_at, updated_at: :updated_at)
+    timestamps(type: :utc_datetime_usec, inserted_at: :inserted_at, updated_at: :updated_at)
   end
 
   @shortcode_regex ~r/^[A-Za-z0-9_-]+$/

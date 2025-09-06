@@ -38,3 +38,6 @@ config :phoenix, :plug_init_mode, :runtime
 # Enable helpful, but potentially expensive runtime checks
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
+
+# Stable slug secret for deterministic tests
+config :shortnr, :slug_secret, "NRdDaHFJrE+5pAKt1y2Ij9eSdxUwLbP/Cn4jH07siWS9qL1qHWJ3ZBkluUDVkZMy"

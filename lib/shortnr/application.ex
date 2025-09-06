@@ -12,6 +12,8 @@ defmodule Shortnr.Application do
       Shortnr.Repo,
       {DNSCluster, query: Application.get_env(:shortnr, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Shortnr.PubSub},
+      # Per-node ETS cache for long_url -> slug
+      Shortnr.UrlCache,
       # Start the Finch HTTP client for sending emails
       {Finch, name: Shortnr.Finch},
       # Start a worker by calling: Shortnr.Worker.start_link(arg)
