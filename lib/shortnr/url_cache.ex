@@ -43,10 +43,14 @@ defmodule Shortnr.UrlCache do
 
   defp ttl_ms do
     case Application.get_env(:shortnr, :url_cache_ttl_ms) do
-      ttl when is_integer(ttl) and ttl > 0 -> ttl
+      ttl when is_integer(ttl) and ttl > 0 ->
+        ttl
+
       _ ->
         case System.get_env("URL_CACHE_TTL_MS") do
-          nil -> @default_ttl_ms
+          nil ->
+            @default_ttl_ms
+
           val ->
             case Integer.parse(val) do
               {n, _} when n > 0 -> n
