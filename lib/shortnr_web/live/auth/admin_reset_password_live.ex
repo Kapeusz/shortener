@@ -31,8 +31,7 @@ defmodule ShortnrWeb.Auth.AdminResetPasswordLive do
       </.simple_form>
 
       <p class="text-center text-sm mt-4">
-        <.link href={~p"/admins/register"}>Register</.link>
-        | <.link href={~p"/admins/log_in"}>Log in</.link>
+        <.link href={~p"/admins/log_in"}>Log in</.link>
       </p>
     </div>
     """

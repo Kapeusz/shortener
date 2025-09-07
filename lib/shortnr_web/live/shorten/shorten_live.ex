@@ -90,30 +90,48 @@ defmodule ShortnrWeb.Shorten.ShortenLive do
 
   def render(assigns) do
     ~H"""
-    <.header>Admin: Create Shortened URL</.header>
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-xl font-semibold text-zinc-900">Shorten URL</h1>
+        <.link
+          navigate={~p"/admins/metrics"}
+          class="inline-flex items-center rounded-md bg-zinc-900 hover:bg-zinc-700 py-2 px-3 text-sm font-semibold text-white"
+        >
+          View Metrics
+        </.link>
+      </div>
 
-    <.simple_form :let={f} for={@changeset} as={:url} phx-change="validate" phx-submit="save">
-      <.input
-        field={f[:long_url]}
-        type="url"
-        label="Long URL"
-        placeholder="https://example.com/very/long/path"
-        required
-      />
-      <:actions>
-        <.button type="submit">Save</.button>
-      </:actions>
-    </.simple_form>
+      <div class="bg-white rounded-lg border p-4">
+        <.simple_form :let={f} for={@changeset} as={:url} phx-change="validate" phx-submit="save">
+          <.input
+            field={f[:long_url]}
+            type="url"
+            label="Long URL"
+            placeholder="https://example.com/very/long/path"
+            required
+          />
+          <:actions>
+            <.button type="submit">Save</.button>
+          </:actions>
+        </.simple_form>
+      </div>
 
-    <.header class="mt-10">Existing URLs</.header>
-    <.table id="urls" rows={@urls}>
-      <:col :let={u} label="Shortened">
-        <span class="font-mono">{@base_url}/{u.shortened_url}</span>
-      </:col>
-      <:col :let={u} label="Long URL">{u.long_url}</:col>
-      <:col :let={u} label="Redirects">{u.redirect_count}</:col>
-      <:col :let={u} label="Created At">{Calendar.strftime(u.inserted_at, "%Y-%m-%d %H:%M")}</:col>
-    </.table>
+      <div>
+        <h2 class="text-lg font-medium text-zinc-900 mb-2">Existing URLs</h2>
+        <.table id="urls" rows={@urls}>
+          <:col :let={u} label="Shortened">
+            <.link href={~p"/#{u.shortened_url}"} class="font-mono text-indigo-600 hover:underline">
+              {@base_url}/{u.shortened_url}
+            </.link>
+          </:col>
+          <:col :let={u} label="Long URL">{u.long_url}</:col>
+          <:col :let={u} label="Redirects">{u.redirect_count}</:col>
+          <:col :let={u} label="Created At">
+            {Calendar.strftime(u.inserted_at, "%Y-%m-%d %H:%M")}
+          </:col>
+        </.table>
+      </div>
+    </div>
     """
   end
 end

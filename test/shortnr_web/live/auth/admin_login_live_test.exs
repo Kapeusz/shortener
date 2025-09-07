@@ -9,8 +9,8 @@ defmodule ShortnrWeb.Auth.AdminLoginLiveTest do
       {:ok, _lv, html} = live(conn, ~p"/admins/log_in")
 
       assert html =~ "Log in"
-      assert html =~ "Register"
-      assert html =~ "Forgot your password?"
+      refute html =~ "Register"
+      refute html =~ "Forgot your password?"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -18,7 +18,7 @@ defmodule ShortnrWeb.Auth.AdminLoginLiveTest do
         conn
         |> log_in_admin(admin_fixture())
         |> live(~p"/admins/log_in")
-        |> follow_redirect(conn, "/")
+        |> follow_redirect(conn, "/shorten")
 
       assert {:ok, _conn} = result
     end
@@ -38,7 +38,7 @@ defmodule ShortnrWeb.Auth.AdminLoginLiveTest do
 
       conn = submit_form(form, conn)
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/shorten"
     end
 
     test "redirects to login page with a flash error if there are no valid credentials", %{
@@ -60,30 +60,12 @@ defmodule ShortnrWeb.Auth.AdminLoginLiveTest do
   end
 
   describe "login navigation" do
-    test "redirects to registration page when the Register button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/log_in")
-
-      {:ok, _login_live, login_html} =
-        lv
-        |> element(~s|main a:fl-contains("Sign up")|)
-        |> render_click()
-        |> follow_redirect(conn, ~p"/admins/register")
-
-      assert login_html =~ "Register"
-    end
-
-    test "redirects to forgot password page when the Forgot Password button is clicked", %{
-      conn: conn
-    } do
-      {:ok, lv, _html} = live(conn, ~p"/admins/log_in")
-
-      {:ok, conn} =
-        lv
-        |> element(~s|main a:fl-contains("Forgot your password?")|)
-        |> render_click()
-        |> follow_redirect(conn, ~p"/admins/reset_password")
-
-      assert conn.resp_body =~ "Forgot your password?"
+    test "does not show registration or forgot password links", %{conn: conn} do
+      {:ok, lv, html} = live(conn, ~p"/admins/log_in")
+      refute html =~ "Register"
+      refute html =~ "Forgot your password?"
+      refute has_element?(lv, ~s|main a:fl-contains("Sign up")|)
+      refute has_element?(lv, ~s|main a:fl-contains("Forgot your password?")|)
     end
   end
 end

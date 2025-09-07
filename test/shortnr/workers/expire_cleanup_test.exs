@@ -8,7 +8,7 @@ defmodule Shortnr.Workers.ExpireCleanupTest do
 
   @now DateTime.utc_now()
 
-  defp insert_url!(slug, long_url, expires_at) do
+  defp insert_url!(slug, long_url, _expires_at) do
     %Url{}
     |> Url.changeset(%{
       shortened_url: slug,

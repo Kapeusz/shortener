@@ -22,7 +22,7 @@ defmodule ShortnrWeb.AdminAuthTest do
       conn = AdminAuth.log_in_admin(conn, admin)
       assert token = get_session(conn, :admin_token)
       assert get_session(conn, :live_socket_id) == "admins_sessions:#{Base.url_encode64(token)}"
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/shorten"
       assert Accounts.get_admin_by_session_token(token)
     end
 
@@ -218,7 +218,7 @@ defmodule ShortnrWeb.AdminAuthTest do
         conn |> assign(:current_admin, admin) |> AdminAuth.redirect_if_admin_is_authenticated([])
 
       assert conn.halted
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/shorten"
     end
 
     test "does not redirect if admin is not authenticated", %{conn: conn} do

@@ -17,11 +17,7 @@ defmodule ShortnrWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ShortnrWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
-  end
+  # Root + unauthenticated login handled below in the auth scope
 
   scope "/", ShortnrWeb do
     pipe_through :api
@@ -55,12 +51,16 @@ defmodule ShortnrWeb.Router do
   scope "/", ShortnrWeb do
     pipe_through [:browser, :redirect_if_admin_is_authenticated]
 
+    # Disable self-registration and password reset/confirmation flows.
+    # Only keep the login route.
     live_session :redirect_if_admin_is_authenticated,
       on_mount: [{ShortnrWeb.AdminAuth, :redirect_if_admin_is_authenticated}] do
-      live "/admins/register", Auth.AdminRegistrationLive, :new
+      # Show login form at root when unauthenticated
+      live "/", Auth.AdminLoginLive, :new
       live "/admins/log_in", Auth.AdminLoginLive, :new
-      live "/admins/reset_password", Auth.AdminForgotPasswordLive, :new
-      live "/admins/reset_password/:token", Auth.AdminResetPasswordLive, :edit
+      # live "/admins/register", Auth.AdminRegistrationLive, :new
+      # live "/admins/reset_password", Auth.AdminForgotPasswordLive, :new
+      # live "/admins/reset_password/:token", Auth.AdminResetPasswordLive, :edit
     end
 
     post "/admins/log_in", Auth.AdminSessionController, :create
@@ -71,8 +71,8 @@ defmodule ShortnrWeb.Router do
 
     live_session :require_authenticated_admin,
       on_mount: [{ShortnrWeb.AdminAuth, :ensure_authenticated}] do
-      live "/admins/settings", Auth.AdminSettingsLive, :edit
-      live "/admins/settings/confirm_email/:token", Auth.AdminSettingsLive, :confirm_email
+      # live "/admins/settings", Auth.AdminSettingsLive, :edit
+      # live "/admins/settings/confirm_email/:token", Auth.AdminSettingsLive, :confirm_email
 
       # Shorten routes
       live "/shorten", Shorten.ShortenLive, :index
@@ -88,8 +88,8 @@ defmodule ShortnrWeb.Router do
 
     live_session :current_admin,
       on_mount: [{ShortnrWeb.AdminAuth, :mount_current_admin}] do
-      live "/admins/confirm/:token", Auth.AdminConfirmationLive, :edit
-      live "/admins/confirm", Auth.AdminConfirmationInstructionsLive, :new
+      # live "/admins/confirm/:token", Auth.AdminConfirmationLive, :edit
+      # live "/admins/confirm", Auth.AdminConfirmationInstructionsLive, :new
     end
   end
 

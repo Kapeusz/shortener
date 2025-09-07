@@ -15,13 +15,12 @@ defmodule ShortnrWeb.AdminSessionControllerTest do
         })
 
       assert get_session(conn, :admin_token)
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/shorten"
 
-      # Now do a logged in request and assert on the menu
-      conn = get(conn, ~p"/")
+      # Now do a logged in request and assert on the menu (no settings link in this app)
+      conn = get(conn, ~p"/shorten")
       response = html_response(conn, 200)
       assert response =~ admin.email
-      assert response =~ ~p"/admins/settings"
       assert response =~ ~p"/admins/log_out"
     end
 
@@ -36,7 +35,7 @@ defmodule ShortnrWeb.AdminSessionControllerTest do
         })
 
       assert conn.resp_cookies["_shortnr_web_admin_remember_me"]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/shorten"
     end
 
     test "logs the admin in with return to", %{conn: conn, admin: admin} do
@@ -65,7 +64,7 @@ defmodule ShortnrWeb.AdminSessionControllerTest do
           }
         })
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/shorten"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Account created successfully"
     end
 
@@ -80,7 +79,7 @@ defmodule ShortnrWeb.AdminSessionControllerTest do
           }
         })
 
-      assert redirected_to(conn) == ~p"/admins/settings"
+      assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password updated successfully"
     end
 

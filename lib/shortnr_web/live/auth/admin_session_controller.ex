@@ -10,7 +10,8 @@ defmodule ShortnrWeb.Auth.AdminSessionController do
 
   def create(conn, %{"_action" => "password_updated"} = params) do
     conn
-    |> put_session(:admin_return_to, ~p"/admins/settings")
+    # Settings page is disabled; return to home instead.
+    |> put_session(:admin_return_to, ~p"/")
     |> create(params, "Password updated successfully!")
   end
 

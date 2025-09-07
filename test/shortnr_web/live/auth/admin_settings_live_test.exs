@@ -1,5 +1,8 @@
 defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
+  @moduledoc false
   use ShortnrWeb.ConnCase, async: true
+  # Settings and email change confirmation disabled; routes removed.
+  @moduletag :skip
 
   alias Shortnr.Accounts
   import Phoenix.LiveViewTest
@@ -10,14 +13,14 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_admin(admin_fixture())
-        |> live(~p"/admins/settings")
+        |> live("/admins/settings")
 
       assert html =~ "Change Email"
       assert html =~ "Change Password"
     end
 
     test "redirects if admin is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/admins/settings")
+      assert {:error, redirect} = live(conn, "/admins/settings")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/admins/log_in"
@@ -35,7 +38,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     test "updates the admin email", %{conn: conn, password: password, admin: admin} do
       new_email = unique_admin_email()
 
-      {:ok, lv, _html} = live(conn, ~p"/admins/settings")
+      {:ok, lv, _html} = live(conn, "/admins/settings")
 
       result =
         lv
@@ -50,7 +53,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/settings")
+      {:ok, lv, _html} = live(conn, "/admins/settings")
 
       result =
         lv
@@ -66,7 +69,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, admin: admin} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/settings")
+      {:ok, lv, _html} = live(conn, "/admins/settings")
 
       result =
         lv
@@ -92,7 +95,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     test "updates the admin password", %{conn: conn, admin: admin, password: password} do
       new_password = valid_admin_password()
 
-      {:ok, lv, _html} = live(conn, ~p"/admins/settings")
+      {:ok, lv, _html} = live(conn, "/admins/settings")
 
       form =
         form(lv, "#password_form", %{
@@ -108,7 +111,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
 
       new_password_conn = follow_trigger_action(form, conn)
 
-      assert redirected_to(new_password_conn) == ~p"/admins/settings"
+      assert redirected_to(new_password_conn) == "/admins/settings"
 
       assert get_session(new_password_conn, :admin_token) != get_session(conn, :admin_token)
 
@@ -119,7 +122,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/settings")
+      {:ok, lv, _html} = live(conn, "/admins/settings")
 
       result =
         lv
@@ -138,7 +141,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/settings")
+      {:ok, lv, _html} = live(conn, "/admins/settings")
 
       result =
         lv
@@ -176,27 +179,27 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
     end
 
     test "updates the admin email once", %{conn: conn, admin: admin, token: token, email: email} do
-      {:error, redirect} = live(conn, ~p"/admins/settings/confirm_email/#{token}")
+      {:error, redirect} = live(conn, "/admins/settings/confirm_email/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/admins/settings"
+      assert path == "/admins/settings"
       assert %{"info" => message} = flash
       assert message == "Email changed successfully."
       refute Accounts.get_admin_by_email(admin.email)
       assert Accounts.get_admin_by_email(email)
 
       # use confirm token again
-      {:error, redirect} = live(conn, ~p"/admins/settings/confirm_email/#{token}")
+      {:error, redirect} = live(conn, "/admins/settings/confirm_email/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/admins/settings"
+      assert path == "/admins/settings"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
     end
 
     test "does not update email with invalid token", %{conn: conn, admin: admin} do
-      {:error, redirect} = live(conn, ~p"/admins/settings/confirm_email/oops")
+      {:error, redirect} = live(conn, "/admins/settings/confirm_email/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/admins/settings"
+      assert path == "/admins/settings"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
       assert Accounts.get_admin_by_email(admin.email)
@@ -204,7 +207,7 @@ defmodule ShortnrWeb.Auth.AdminSettingsLiveTest do
 
     test "redirects if admin is not logged in", %{token: token} do
       conn = build_conn()
-      {:error, redirect} = live(conn, ~p"/admins/settings/confirm_email/#{token}")
+      {:error, redirect} = live(conn, "/admins/settings/confirm_email/#{token}")
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/admins/log_in"
       assert %{"error" => message} = flash

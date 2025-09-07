@@ -1,5 +1,8 @@
 defmodule ShortnrWeb.Auth.AdminConfirmationLiveTest do
+  @moduledoc false
   use ShortnrWeb.ConnCase, async: true
+  # Email confirmation disabled; routes removed.
+  @moduletag :skip
 
   import Phoenix.LiveViewTest
   import Shortnr.AccountsFixtures
@@ -13,7 +16,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationLiveTest do
 
   describe "Confirm admin" do
     test "renders confirmation page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/admins/confirm/some-token")
+      {:ok, _lv, html} = live(conn, "/admins/confirm/some-token")
       assert html =~ "Confirm Account"
     end
 
@@ -23,7 +26,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationLiveTest do
           Accounts.deliver_admin_confirmation_instructions(admin, url)
         end)
 
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm/#{token}")
+      {:ok, lv, _html} = live(conn, "/admins/confirm/#{token}")
 
       result =
         lv
@@ -41,7 +44,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationLiveTest do
       assert Repo.all(Accounts.AdminToken) == []
 
       # when not logged in
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm/#{token}")
+      {:ok, lv, _html} = live(conn, "/admins/confirm/#{token}")
 
       result =
         lv
@@ -59,7 +62,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationLiveTest do
         build_conn()
         |> log_in_admin(admin)
 
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm/#{token}")
+      {:ok, lv, _html} = live(conn, "/admins/confirm/#{token}")
 
       result =
         lv
@@ -72,7 +75,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationLiveTest do
     end
 
     test "does not confirm email with invalid token", %{conn: conn, admin: admin} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm/invalid-token")
+      {:ok, lv, _html} = live(conn, "/admins/confirm/invalid-token")
 
       {:ok, conn} =
         lv

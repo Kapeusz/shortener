@@ -1,5 +1,8 @@
 defmodule ShortnrWeb.Auth.AdminConfirmationInstructionsLiveTest do
+  @moduledoc false
   use ShortnrWeb.ConnCase, async: true
+  # Email confirmation disabled; routes removed.
+  @moduletag :skip
 
   import Phoenix.LiveViewTest
   import Shortnr.AccountsFixtures
@@ -13,12 +16,12 @@ defmodule ShortnrWeb.Auth.AdminConfirmationInstructionsLiveTest do
 
   describe "Resend confirmation" do
     test "renders the resend confirmation page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/admins/confirm")
+      {:ok, _lv, html} = live(conn, "/admins/confirm")
       assert html =~ "Resend confirmation instructions"
     end
 
     test "sends a new confirmation token", %{conn: conn, admin: admin} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm")
+      {:ok, lv, _html} = live(conn, "/admins/confirm")
 
       {:ok, conn} =
         lv
@@ -35,7 +38,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationInstructionsLiveTest do
     test "does not send confirmation token if admin is confirmed", %{conn: conn, admin: admin} do
       Repo.update!(Accounts.Admin.confirm_changeset(admin))
 
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm")
+      {:ok, lv, _html} = live(conn, "/admins/confirm")
 
       {:ok, conn} =
         lv
@@ -50,7 +53,7 @@ defmodule ShortnrWeb.Auth.AdminConfirmationInstructionsLiveTest do
     end
 
     test "does not send confirmation token if email is invalid", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/confirm")
+      {:ok, lv, _html} = live(conn, "/admins/confirm")
 
       {:ok, conn} =
         lv

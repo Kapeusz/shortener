@@ -1,12 +1,15 @@
 defmodule ShortnrWeb.Auth.AdminRegistrationLiveTest do
+  @moduledoc false
   use ShortnrWeb.ConnCase, async: true
+  # Registration disabled in router; admin accounts are provisioned via IEx.
+  @moduletag :skip
 
   import Phoenix.LiveViewTest
   import Shortnr.AccountsFixtures
 
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/admins/register")
+      {:ok, _lv, html} = live(conn, "/admins/register")
 
       assert html =~ "Register"
       assert html =~ "Log in"
@@ -16,14 +19,14 @@ defmodule ShortnrWeb.Auth.AdminRegistrationLiveTest do
       result =
         conn
         |> log_in_admin(admin_fixture())
-        |> live(~p"/admins/register")
+        |> live("/admins/register")
         |> follow_redirect(conn, "/")
 
       assert {:ok, _conn} = result
     end
 
     test "renders errors for invalid data", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/register")
+      {:ok, lv, _html} = live(conn, "/admins/register")
 
       result =
         lv
@@ -38,7 +41,7 @@ defmodule ShortnrWeb.Auth.AdminRegistrationLiveTest do
 
   describe "register admin" do
     test "creates account and logs the admin in", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/register")
+      {:ok, lv, _html} = live(conn, "/admins/register")
 
       email = unique_admin_email()
       form = form(lv, "#registration_form", admin: valid_admin_attributes(email: email))
@@ -56,7 +59,7 @@ defmodule ShortnrWeb.Auth.AdminRegistrationLiveTest do
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/register")
+      {:ok, lv, _html} = live(conn, "/admins/register")
 
       admin = admin_fixture(%{email: "test@email.com"})
 
@@ -73,7 +76,7 @@ defmodule ShortnrWeb.Auth.AdminRegistrationLiveTest do
 
   describe "registration navigation" do
     test "redirects to login page when the Log in button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/admins/register")
+      {:ok, lv, _html} = live(conn, "/admins/register")
 
       {:ok, _login_live, login_html} =
         lv
