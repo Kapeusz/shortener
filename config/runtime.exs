@@ -33,6 +33,7 @@ if config_env() == :prod do
   config :shortnr, Shortnr.Repo,
     # ssl: true,
     url: database_url,
+    types: Shortnr.PostgresTypes,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 

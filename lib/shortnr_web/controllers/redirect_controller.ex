@@ -11,7 +11,12 @@ defmodule ShortnrWeb.RedirectController do
 
       url ->
         publish_redirect_event(conn, slug)
-        redirect(conn, external: url.long_url)
+
+        if Application.get_env(:shortnr, :geo_capture, true) do
+          render(conn, :geo_capture, slug: slug, long_url: url.long_url)
+        else
+          redirect(conn, external: url.long_url)
+        end
     end
   end
 

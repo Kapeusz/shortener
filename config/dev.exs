@@ -6,6 +6,7 @@ config :shortnr, Shortnr.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "shortnr_dev",
+  types: Shortnr.PostgresTypes,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

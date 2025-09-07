@@ -23,6 +23,11 @@ defmodule ShortnrWeb.Router do
     get "/", PageController, :home
   end
 
+  scope "/", ShortnrWeb do
+    pipe_through :api
+    post "/geo", GeoController, :create
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ShortnrWeb do
   #   pipe_through :api
@@ -71,6 +76,8 @@ defmodule ShortnrWeb.Router do
 
       # Shorten routes
       live "/shorten", Shorten.ShortenLive, :index
+      live "/admins/metrics", Admin.MetricsLive, :index
+      live "/admins/targets/:slug", Admin.TargetMapLive, :show
     end
   end
 

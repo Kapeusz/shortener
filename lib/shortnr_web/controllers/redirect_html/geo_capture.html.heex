@@ -1,0 +1,67 @@
+<main class="min-h-screen flex items-center justify-center">
+  <div class="text-center">
+    <p class="mb-2 text-zinc-700">Preparing your redirect…</p>
+    <p class="text-xs text-zinc-500">
+      We try to capture an approximate location before redirecting.
+    </p>
+  </div>
+</main>
+
+<script>
+  (function(){
+    const slug = <%= Phoenix.HTML.raw(Jason.encode!(@slug)) %>;
+    const target = <%= Phoenix.HTML.raw(Jason.encode!(@long_url)) %>;
+    const csrf = document.querySelector("meta[name='csrf-token']")?.getAttribute("content");
+
+    function sendLocationAndGo(lat, lng){
+      const payload = JSON.stringify({slug: slug, lat: lat, lng: lng})
+      let sent = false
+
+      // Prefer Beacon API to survive page unload
+      if (navigator.sendBeacon) {
+        try {
+          const ok = navigator.sendBeacon("/geo", new Blob([payload], {type: "application/json"}))
+          if (ok) sent = true
+        } catch (_) {}
+      }
+
+      if (!sent) {
+        fetch("/geo", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json",
+            "x-csrf-token": csrf || ""
+          },
+          credentials: "same-origin",
+          keepalive: true,
+          body: payload
+        }).catch(_e => {/* ignore */})
+      }
+
+      // Navigate immediately; network runs in background
+      window.location.replace(target)
+    }
+
+    // Allow enough time for geolocation + network send
+    const fallback = setTimeout(() => window.location.replace(target), 3500);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          clearTimeout(fallback);
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          sendLocationAndGo(lat, lng);
+        },
+        _err => {
+          // Permission denied or unavailable: go ahead
+          window.location.replace(target);
+        },
+        {enableHighAccuracy: false, timeout: 2500, maximumAge: 60000}
+      );
+    } else {
+      // No geolocation support
+      window.location.replace(target);
+    }
+  })();
+</script>

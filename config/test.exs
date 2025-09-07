@@ -13,6 +13,7 @@ config :shortnr, Shortnr.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "shortnr_test#{System.get_env("MIX_TEST_PARTITION")}",
+  types: Shortnr.PostgresTypes,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
 
@@ -41,3 +42,6 @@ config :phoenix_live_view,
 
 # Stable slug secret for deterministic tests
 config :shortnr, :slug_secret, "NRdDaHFJrE+5pAKt1y2Ij9eSdxUwLbP/Cn4jH07siWS9qL1qHWJ3ZBkluUDVkZMy"
+
+# Disable geo capture flow in tests so redirects remain 302
+config :shortnr, :geo_capture, false
