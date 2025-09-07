@@ -13,13 +13,18 @@ defmodule ShortnrWeb.Router do
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
         "default-src 'self'; " <>
-          "img-src 'self' data: blob:; " <>
+          # Images (Google Maps tiles/assets)
+          "img-src 'self' data: blob: https://maps.gstatic.com https://maps.googleapis.com https://*.gstatic.com https://*.googleapis.com; " <>
           "media-src 'self' blob:; " <>
           "object-src 'none'; " <>
-          "script-src 'self' 'unsafe-eval'; " <>
-          "style-src 'self' 'unsafe-inline'; " <>
-          "font-src 'self'; " <>
-          "connect-src 'self' ws: wss:"
+          # Scripts (Google Maps JS)
+          "script-src 'self' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com; " <>
+          # Styles (allow inline; include Google Fonts CSS if ever used)
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " <>
+          # Fonts (Google Fonts domain)
+          "font-src 'self' https://fonts.gstatic.com; " <>
+          # XHR/WebSocket connections
+          "connect-src 'self' ws: wss: https://maps.googleapis.com https://maps.gstatic.com"
     }
 
     plug :fetch_current_admin
