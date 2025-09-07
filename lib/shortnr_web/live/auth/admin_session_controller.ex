@@ -1,6 +1,10 @@
 defmodule ShortnrWeb.Auth.AdminSessionController do
   use ShortnrWeb, :controller
 
+  plug ShortnrWeb.Plugs.RateLimit,
+       [label: "login", limit: 5, scale_ms: 60_000, by: :ip]
+       when action in [:create]
+
   alias Shortnr.Accounts
   alias ShortnrWeb.AdminAuth
 
@@ -27,7 +31,6 @@ defmodule ShortnrWeb.Auth.AdminSessionController do
       |> put_flash(:info, info)
       |> AdminAuth.log_in_admin(admin, admin_params)
     else
-      # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
       |> put_flash(:error, "Invalid email or password")
       |> put_flash(:email, String.slice(email, 0, 160))

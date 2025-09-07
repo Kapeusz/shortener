@@ -62,7 +62,10 @@ defmodule Shortnr.MixProject do
       {:geo_postgis, "~> 3.7"},
       {:oban, "~> 2.17"},
       {:scrivener_ecto, "~> 2.0"},
-      {:scrivener_list, "~> 2.0"}
+      {:scrivener_list, "~> 2.0"},
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:hammer, "~> 6.1"},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 

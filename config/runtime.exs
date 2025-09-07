@@ -59,6 +59,14 @@ if config_env() == :prod do
 
   config :shortnr, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
+  # Restrict cross-origin requests/websocket origins
+  allowed_origins =
+    System.get_env("ALLOWED_ORIGINS")
+    |> case do
+      nil -> ["https://#{host}"]
+      s -> s |> String.split(",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
+    end
+
   config :shortnr, ShortnrWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
@@ -69,7 +77,8 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    secret_key_base: secret_key_base
+    secret_key_base: secret_key_base,
+    check_origin: allowed_origins
 
   # URL cache TTL (ms). Defaults to 30 minutes if not set.
   config :shortnr,
@@ -126,3 +135,12 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+cors_origins =
+  System.get_env("CORS_ORIGINS")
+  |> case do
+    nil -> []
+    s -> s |> String.split(",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
+  end
+
+config :shortnr, :cors_origins, cors_origins

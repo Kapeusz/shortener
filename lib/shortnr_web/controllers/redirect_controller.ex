@@ -1,5 +1,8 @@
 defmodule ShortnrWeb.RedirectController do
   use ShortnrWeb, :controller
+  plug ShortnrWeb.Plugs.RateLimit,
+       [label: "redirect", limit: 120, scale_ms: 60_000, by: :ip]
+       when action in [:show]
   alias Shortnr.Urls
 
   def show(conn, %{"slug" => slug}) do

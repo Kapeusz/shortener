@@ -9,12 +9,27 @@ defmodule ShortnrWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {ShortnrWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+
+    plug :put_secure_browser_headers, %{
+      "content-security-policy" =>
+        "default-src 'self'; " <>
+          "img-src 'self' data: blob:; " <>
+          "media-src 'self' blob:; " <>
+          "object-src 'none'; " <>
+          "script-src 'self' 'unsafe-eval'; " <>
+          "style-src 'self' 'unsafe-inline'; " <>
+          "font-src 'self'; " <>
+          "connect-src 'self' ws: wss:"
+    }
+
     plug :fetch_current_admin
   end
 
   pipeline :api do
+    plug ShortnrWeb.Plugs.CORS
     plug :accepts, ["json"]
+    # Global API rate limit: 60 reqs/min per IP
+    plug ShortnrWeb.Plugs.RateLimit, label: "api", limit: 60, scale_ms: 60_000, by: :ip
   end
 
   # Root + unauthenticated login handled below in the auth scope
