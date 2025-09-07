@@ -8,10 +8,15 @@ defmodule ShortnrWeb.Admin.MetricsLive do
 
   @max_events 10_000
 
-  def mount(_params, _session, socket) do
+  @impl true
+  def mount(params, _session, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(Shortnr.PubSub, "redirects")
 
     {totals, by_browser, by_location} = initial_aggregates()
+    per_page = 10
+    page_no = (params["page"] && String.to_integer(params["page"])) || 1
+    items = totals |> Enum.sort_by(&elem(&1, 1), :desc)
+    page = paginate_list(items, page_no, per_page)
 
     {:ok,
      socket
@@ -19,28 +24,58 @@ defmodule ShortnrWeb.Admin.MetricsLive do
      |> assign(:totals, totals)
      |> assign(:by_browser, by_browser)
      |> assign(:by_location, by_location)
-     |> assign(:selected, nil)}
+     |> assign(:selected, nil)
+     |> assign(:page, page)}
   end
 
+  @impl true
   def handle_info({:redirect, %{slug: slug, user_agent: ua, ip: ip}}, socket) do
     totals = Map.update(socket.assigns.totals, slug, 1, &(&1 + 1))
     by_browser = update_nested(socket.assigns.by_browser, slug, UA.browser(ua))
     by_location = update_nested(socket.assigns.by_location, slug, Location.bucket(ip))
     selected = socket.assigns.selected || slug
 
+    items = totals |> Enum.sort_by(&elem(&1, 1), :desc)
+    page = paginate_list(items, socket.assigns.page.page_number, socket.assigns.page.page_size)
     {:noreply,
      assign(socket,
        totals: totals,
        by_browser: by_browser,
        by_location: by_location,
-       selected: selected
+       selected: selected,
+       page: page
      )}
   end
 
+  @impl true
   def handle_event("select", %{"slug" => slug}, socket) do
     {:noreply, assign(socket, :selected, slug)}
   end
 
+  @impl true
+  def handle_params(params, _uri, socket) do
+    page_no = (params["page"] && String.to_integer(params["page"])) || 1
+    items = socket.assigns.totals |> Enum.sort_by(&elem(&1, 1), :desc)
+    page = paginate_list(items, page_no, socket.assigns.page.page_size)
+    {:noreply, assign(socket, page: page)}
+  end
+
+  defp paginate_list(items, page_no, page_size) do
+    if Code.ensure_loaded?(Scrivener.List) do
+      apply(Scrivener.List, :paginate, [items, [page: page_no, page_size: page_size]])
+    else
+      total_entries = length(items)
+      # emulate ceil_div for positive integers
+      total_pages =
+        max(div(max(total_entries, 1) + page_size - 1, page_size), 1)
+      page_no = page_no |> max(1) |> min(total_pages)
+      offset = (page_no - 1) * page_size
+      entries = items |> Enum.drop(offset) |> Enum.take(page_size)
+      %{entries: entries, page_number: page_no, page_size: page_size, total_pages: total_pages, total_entries: total_entries}
+    end
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <.header>Real-time Usage Metrics</.header>
@@ -48,7 +83,7 @@ defmodule ShortnrWeb.Admin.MetricsLive do
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <h3 class="font-semibold mb-2">Totals</h3>
-        <.table id="totals" rows={Enum.sort_by(@totals, &elem(&1, 1), :desc)}>
+        <.table id="totals" rows={@page.entries}>
           <:col :let={{slug, _cnt}} label="Slug">
             <button
               phx-click="select"
@@ -60,6 +95,19 @@ defmodule ShortnrWeb.Admin.MetricsLive do
           </:col>
           <:col :let={{_slug, cnt}} label="Redirects">{cnt}</:col>
         </.table>
+        <div class="flex items-center justify-between mt-3 text-sm">
+          <%= if @page.page_number > 1 do %>
+            <.link patch={~p"/admins/metrics?#{[page: @page.page_number - 1]}"} class="text-indigo-600 hover:underline">Previous</.link>
+          <% else %>
+            <span class="text-zinc-400">Previous</span>
+          <% end %>
+          <span class="text-zinc-600">Page {@page.page_number} of {@page.total_pages}</span>
+          <%= if @page.page_number < @page.total_pages do %>
+            <.link patch={~p"/admins/metrics?#{[page: @page.page_number + 1]}"} class="text-indigo-600 hover:underline">Next</.link>
+          <% else %>
+            <span class="text-zinc-400">Next</span>
+          <% end %>
+        </div>
       </div>
 
       <div>

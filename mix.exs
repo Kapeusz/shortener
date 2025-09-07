@@ -60,7 +60,9 @@ defmodule Shortnr.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:geo_postgis, "~> 3.7"},
-      {:oban, "~> 2.17"}
+      {:oban, "~> 2.17"},
+      {:scrivener_ecto, "~> 2.0"},
+      {:scrivener_list, "~> 2.0"}
     ]
   end
 

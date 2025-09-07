@@ -12,6 +12,15 @@ defmodule Shortnr.Urls do
     Repo.all(from u in Url, order_by: [desc: u.inserted_at, desc: u.shortened_url])
   end
 
+  @doc """
+  Paginate URLs ordered by newest first
+  """
+  def paginate_urls(page \\ 1, per_page \\ 10) when is_integer(page) and is_integer(per_page) do
+    per_page = per_page |> max(1) |> min(100)
+    query = from u in Url, order_by: [desc: u.inserted_at, desc: u.shortened_url]
+    Repo.paginate(query, page: page, page_size: per_page)
+  end
+
   def change_url(%Url{} = url, attrs \\ %{}) do
     Url.changeset(url, attrs)
   end
