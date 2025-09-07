@@ -1,0 +1,38 @@
+app = "shortnr-broken-firefly-9626"
+primary_region = "waw"
+
+[build]
+dockerfile = "Dockerfile"
+
+[deploy]
+release_command = "/app/bin/migrate"
+
+[env]
+MIX_ENV = "prod"
+PHX_HOST = "shortnr-broken-firefly-9626.fly.dev"
+PORT = "4000"
+
+[http_service]
+auto_start_machines = true
+auto_stop_machines = false
+force_https = true
+internal_port = 4_000
+min_machines_running = 1
+processes = [ "app" ]
+
+  [[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  path = "/"
+  timeout = "5s"
+
+[[statics]]
+guest_path = "/app/priv/static"
+tigris_bucket = ""
+url_prefix = "/assets"
+
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory = "1gb"
