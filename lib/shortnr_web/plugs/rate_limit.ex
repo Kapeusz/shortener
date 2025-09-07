@@ -17,17 +17,22 @@ defmodule ShortnrWeb.Plugs.RateLimit do
   end
 
   def call(conn, %{label: label, limit: limit, scale_ms: scale_ms, by: by}) do
-    key = bucket_key(conn, by, label)
+    # Disable in test
+    if Application.get_env(:shortnr, :rate_limit, true) == false do
+      conn
+    else
+      key = bucket_key(conn, by, label)
 
-    case Hammer.check_rate(key, scale_ms, limit) do
-      {:allow, _count} ->
-        conn
+      case Hammer.check_rate(key, scale_ms, limit) do
+        {:allow, _count} ->
+          conn
 
-      {:deny, _limit} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(429, ~s({"error":"rate_limited"}))
-        |> halt()
+        {:deny, _limit} ->
+          conn
+          |> put_resp_content_type("application/json")
+          |> send_resp(429, ~s({"error":"rate_limited"}))
+          |> halt()
+      end
     end
   end
 

@@ -78,7 +78,15 @@ defmodule ShortnrWeb.Admin.MetricsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.header>Real-time Usage Metrics</.header>
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-xl font-semibold text-zinc-900">Usage Metrics</h1>
+      <.link
+        navigate={~p"/shorten"}
+        class="inline-flex items-center rounded-md bg-zinc-900 hover:bg-zinc-700 py-2 px-3 text-sm font-semibold text-white"
+      >
+        All URLs
+      </.link>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>

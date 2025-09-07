@@ -11,20 +11,22 @@ defmodule ShortnrWeb.Auth.AdminLoginLive do
         </:subtitle>
       </.header>
 
-      <.simple_form for={@form} id="login_form" action={~p"/admins/log_in"} phx-update="ignore">
-        <.input field={@form[:email]} type="email" label="Email" required />
-        <.input field={@form[:password]} type="password" label="Password" required />
+      <div class="rounded-2xl bg-white p-6 shadow ring-1 ring-zinc-200 overflow-hidden">
+        <.simple_form for={@form} id="login_form" action={~p"/admins/log_in"} phx-update="ignore">
+          <.input field={@form[:email]} type="email" label="Email" required />
+          <.input field={@form[:password]} type="password" label="Password" required />
 
-        <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <!-- Password reset disabled -->
-        </:actions>
-        <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full">
-            Log in <span aria-hidden="true">→</span>
-          </.button>
-        </:actions>
-      </.simple_form>
+          <:actions>
+            <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
+            <!-- Password reset disabled -->
+          </:actions>
+          <:actions>
+            <.button phx-disable-with="Logging in..." class="w-full">
+              Log in <span aria-hidden="true">→</span>
+            </.button>
+          </:actions>
+        </.simple_form>
+      </div>
     </div>
     """
   end

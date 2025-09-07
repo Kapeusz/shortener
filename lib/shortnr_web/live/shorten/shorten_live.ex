@@ -149,7 +149,9 @@ defmodule ShortnrWeb.Shorten.ShortenLive do
               {@base_url}/{u.shortened_url}
             </.link>
           </:col>
-          <:col :let={u} label="Long URL">{u.long_url}</:col>
+          <:col :let={u} label="Long URL">
+            <span class="break-all">{u.long_url}</span>
+          </:col>
           <:col :let={u} label="Redirects">{u.redirect_count}</:col>
           <:col :let={u} label="Created At">
             {Calendar.strftime(u.inserted_at, "%Y-%m-%d %H:%M")}

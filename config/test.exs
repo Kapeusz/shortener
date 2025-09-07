@@ -48,3 +48,6 @@ config :shortnr, :geo_capture, false
 
 # Disable Oban queues/plugins during tests
 config :shortnr, Oban, queues: false, plugins: false
+
+# Disable rate limiting in tests to avoid flakiness
+config :shortnr, :rate_limit, false
