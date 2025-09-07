@@ -16,6 +16,8 @@ defmodule Shortnr.Application do
       Shortnr.UrlCache,
       # Redirect metrics collector (PubSub -> Postgres batch inserts)
       Shortnr.Metrics.Collector,
+      # Oban job processor (cleanup, scheduled jobs)
+      {Oban, Application.fetch_env!(:shortnr, Oban)},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Shortnr.Finch},
       # Start a worker by calling: Shortnr.Worker.start_link(arg)

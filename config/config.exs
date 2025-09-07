@@ -31,6 +31,19 @@ config :shortnr, ShortnrWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :shortnr, Shortnr.Mailer, adapter: Swoosh.Adapters.Local
 
+# Oban configuration (queues and plugins)
+config :shortnr, Oban,
+  repo: Shortnr.Repo,
+  queues: [default: 10],
+  plugins: [
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7},
+    {Oban.Plugins.Cron,
+     crontab: [
+       # Run daily at 00:00 UTC
+       {"0 0 * * *", Shortnr.Workers.ExpireCleanup}
+     ]}
+  ]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

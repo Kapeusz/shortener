@@ -45,3 +45,6 @@ config :shortnr, :slug_secret, "NRdDaHFJrE+5pAKt1y2Ij9eSdxUwLbP/Cn4jH07siWS9qL1q
 
 # Disable geo capture flow in tests so redirects remain 302
 config :shortnr, :geo_capture, false
+
+# Disable Oban queues/plugins during tests
+config :shortnr, Oban, queues: false, plugins: false
