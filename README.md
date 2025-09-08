@@ -12,8 +12,8 @@ Key capabilities:
 - Basic API endpoints with CORS and per-IP rate limiting.
 
 ## Technologies
-- Elixir/Phoenix: Phoenix 1.7 + LiveView for UI
-- Ecto + PostgreSQL: Persistence, pagination (Scrivener)
+- Elixir/Erlang/Phoenix: Elixir 1.17.1-otp-27, Erlang 27.0, Phoenix 1.7 + LiveView for UI
+- Ecto + PostgreSQL: Postgres 17.4+, Persistence, pagination (Scrivener)
 - PostGIS + `geo_postgis`: Storing geolocation points (SRID 4326)
 - Hammer: Simple rate limiting plug
 - PubSub: Real‑time metrics updates
@@ -53,3 +53,7 @@ Run the test suite:
 ```
 mix test
 ```
+
+
+## TBA: 
+More tests to improve coverage and edge cases
